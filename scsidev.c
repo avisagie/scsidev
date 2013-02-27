@@ -209,6 +209,8 @@
  *     - Support the new sysfs names for 2.6.18+
  *   -> 2.37     
  *
+ *   * 2013-02-27: Put on github.
+ *
  *     TODO:
  *           Change wwid to string type to handle T10 ...
  *           handle more identifiers to match devices
@@ -233,7 +235,7 @@
 #include <ctype.h>
 #include <getopt.h>
  
-static char rcsid[] ="$Id: scsidev.c,v 1.28.2.69 2007/07/18 23:01:16 garloff Exp $";
+static char rcsid[] ="$Id$";
 static char *versid = "scsidev " VERSION " 2007-07-19";
 static char *copyright = "Copyright: GNU GPL  (see file COPYING)\n" \
 " (w)  1994--1997 Eric Youngdale <eric@andante.org>\n"\
@@ -1118,7 +1120,7 @@ int comparediskidlun(sname *spnt, int no)
 	int major, minor, res, fd;
 	
 	major = disknum_to_sd_major (no);
-	minor = (no << 4) & ~0x0f;
+	minor = (no & 0x0f) << 4;
     
 	res = mknod (TESTDEV, 0600 | S_IFBLK,
 		makedev (major, minor));
