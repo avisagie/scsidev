@@ -1165,7 +1165,7 @@ void findscsidisk(sname * spnt, int no)
 		printf("Findscsidisk: %d\n",no);
 	/* Default values */
 	spnt->major = disknum_to_sd_major (no);
-	spnt->minor = (no << 4) & ~0x0f;
+	spnt->minor = (no << 4) & 0x0f;
 	/* only search up to full_scan devices may be a bad assumption, but 
 	 * scanning the whole list could take a long time */
 	unlink (TESTDEV);
