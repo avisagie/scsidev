@@ -1,0 +1,61 @@
+#! /bin/sh
+#
+# Copyright (c) 2002 SuSE GmbH Nuernberg, Germany.  All rights reserved.
+# License: GNU GPL.
+#
+# /etc/init.d/boot.scsidev
+#
+### BEGIN INIT INFO
+# Provides:          boot.scsidev
+# Required-Start:    boot.rootfsck
+# Should-Start:      boot.udev
+# Required-Stop:
+# Default-Start:     B
+# Default-Stop:
+# Short-Description: set up /dev/scsi/ 
+# Description:       scsidev creates persistent device nodes
+#	in /dev/scsi/ even if your SCSI config changes.
+### END INIT INFO
+
+. /etc/rc.status
+test -r /etc/sysconfig/scsidev || exit 6
+. /etc/sysconfig/scsidev
+
+SCSIDEV_BIN=/bin/scsidev
+test -x $SCSIDEV_BIN || exit 5
+
+test "$SCSIDEV_ARGS" = "disable" && exit 0
+
+rc_reset
+case "$1" in 
+    start|try-restart|restart|force-reload|reload)
+	#unset RW
+	#if test -r /proc/mounts; then
+	#	RW=`sed '/^rootfs/d;s/^[^ ]\+ \/ [^ ]\+ \([^ ]\+\).*$/\1/p;d' </proc/self/mounts`
+	#fi	
+	echo -n "Scanning SCSI devices and filling /dev/scsi/ "
+	#if [ "$RW" != "rw" ]; then
+	#	mount -o remount,rw /
+	#fi
+	$SCSIDEV_BIN $SCSIDEV_ARGS
+	rc_status -v
+	#if [ "$1" = "start" -a "$RW" != "rw" ]; then
+	#	mount -o remount,ro /
+	#fi
+	;;
+    stop)
+	#rc_failed 3
+	#rc_status -v
+	;;
+    status)
+	rc_failed 4
+	rc_status -v
+	;;
+    *)
+	echo "Usage: $0 start|restart"
+	exit 1
+	;;
+esac
+
+rc_exit
+

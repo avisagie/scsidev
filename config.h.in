@@ -1,0 +1,16 @@
+/* config.h.in.  Generated automatically from configure.in by autoheader.  */
+
+/* Define to empty if the keyword does not work.  */
+#undef const
+
+/* Define if you have the </usr/src/linux/drivers/scsi/scsi.h> header file.  */
+#undef HAVE__USR_SRC_LINUX_DRIVERS_SCSI_SCSI_H
+
+/* Define if you have the <linux/scsi.h> header file.  */
+#undef HAVE_LINUX_SCSI_H
+
+/* Define if you have the <scsi/sg.h> header file.  */
+#undef HAVE_SCSI_SG_H
+
+/* Define if you have the <scsi/scsi.h> header file.  */
+#undef HAVE_SCSI_SCSI_H

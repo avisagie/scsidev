@@ -1,0 +1,60 @@
+--- /sbin/init.d/boot.orig	Thu Jan 20 11:20:25 2000
++++ /sbin/init.d/boot	Mon Feb 14 23:44:26 2000
+@@ -33,2 +33,21 @@
+ 
++# 
++# Load SCSI driver
++# 
++modprobe scsi_hostadapter
++# 
++# NOTE: grep needs to be available, i.e. reside in /bin !!!
++# 
++if test -x /bin/scsidev -a test -x /bin/grep -a ! -z "`grep /dev/scsi /etc/fstab`"; then
++	HAVE_DEVSCSI_RAM3=1
++	ECHO_RETURN=$rc_done_up
++	echo "Setting up SCSI devices ..."
++	dd if=/dev/zero of=/dev/ram3 bs=1024 count=512 >/dev/null 2>&1
++	mke2fs -q -F -i1024 -g4096 /dev/ram3 512
++	test -d /dev/scsi || mkdir /dev/scsi
++	mount /dev/ram3 /dev/scsi
++	/bin/scsidev -r -q || ECHO_RETURN=$rc_failed_up
++	echo -e "$ECHO_RETURN"
++fi	
++
+ #
+@@ -222,4 +241,25 @@
+ 
++# If scsidev created a ramdisk for /dev/scsi, it's  now time to
++# remove it: / is writeable now.
++# In order to prevent trouble, swap needs to be turned off before
++if test -x /bin/scsidev -a ! -z "$HAVE_DEVSCSI_RAM3"; then
++	ECHO_RETURN=$rc_done_up
++	echo "Cleaning /dev/scsi ..."
++	if test ! -z "`grep /dev/scsi /etc/fstab | grep swap`"; then
++		swapoff -a
++		NEED_SWAPON_AGAIN=1
++	fi	
++	umount /dev/scsi || unset HAVE_DEVSCSI_RAM3
++fi
++if test -x /bin/scsidev; then
++	/bin/scsidev -r -q
++fi
++if test ! -z "$NEED_SWAPON_AGAIN"; then
++	swapon -a
++	unset NEED_SWAPON_AGAIN
++fi	
++# ramdisk will be freed later, when /usr is mounted.
++
+ #
+ # Mount local filesystems in '/etc/fstab' (and create an entry 
+ # for / and /proc).
+@@ -301,2 +341,9 @@
++
++# Now finally remove the scsidev ramdisk to free some memory
++if test ! -z "$HAVE_DEVSCSI_RAM3"; then
++	echo "Free /dev/scsi ramdisk"
++	freeramdisk /dev/ram3
++	unset HAVE_DEVSCSI_RAM3
++fi
+ 
+ #

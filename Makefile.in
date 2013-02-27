@@ -1,0 +1,70 @@
+#
+# $Id: Makefile.in,v 1.9.2.4 2005/08/22 00:41:01 garloff Exp $
+#
+## Makefile for scsidev.
+
+#### Start of system configuration section. ####
+
+srcdir = @srcdir@
+VPATH = @srcdir@
+
+CC = @CC@
+
+INSTALL = @INSTALL@
+INSTALL_PROGRAM = @INSTALL_PROGRAM@
+INSTALL_DATA = @INSTALL_DATA@
+
+LIBS = @LIBS@
+
+VERSION = $(shell cat VERSION)
+
+prefix = $(DESTDIR)/usr
+exec_prefix = $(DESTDIR)
+
+bindir = $(exec_prefix)/bin
+docdir = $(prefix)/share/doc/packages
+
+# Where to put the manual pages.
+mandir = $(prefix)/share/man/man8
+#mandir = $(prefix)/man/man8
+# Extension (not including `.') for the manual page filenames.
+manext = 8
+
+#### End of system configuration section. ####
+CFLAGS=@CFLAGS@ -Wall -DVERSION=\"$(VERSION)\" # -g -DDEBUG
+
+World: scsidev
+
+scsidev: Makefile scsidev.c config.h
+	${CC} ${CFLAGS} -o scsidev scsidev.c
+
+Makefile: Makefile.in config.status
+	CONFIG_FILES=Makefile CONFIG_HEADERS= $(SHELL) ./config.status
+
+config.status: configure
+	$(SHELL) config.status --recheck
+
+configure:  configure.in
+	cd $(srcdir) && autoconf
+
+install: scsidev
+	install -d $(bindir)
+	install -m 755 -s scsidev $(bindir)
+	install -d $(mandir)
+	install -m 644 scsidev.8 $(mandir)
+	gzip -9f $(mandir)/scsidev.8
+	if [ ! -d $(DESTDIR)/dev/scsi ]; then mkdir -p $(DESTDIR)/dev/scsi; fi
+	#install -d $(docdir)/scsidev
+	#install COPYING boot.diff README scsi.alias CHANGES $(docdir)/scsidev/
+
+dist: clean
+	rm Makefile
+	(DIR=`/bin/pwd`; DIR=`basename $$DIR`; cd .. && mv $$DIR scsidev-$(VERSION) \
+	&& tar cvvf - --exclude scsidev-$(VERSION)/CVS \
+	   --exclude scsidev-$(VERSION)/autom4te.cache scsidev-$(VERSION) \
+	| gzip -9 > scsidev-$(VERSION).tar.gz; mv scsidev-$(VERSION) $$DIR)
+
+clean:
+	rm -f *~ .*~ *.o scsidev
+	/bin/rm -f config.status config.log config.cache config.h
+

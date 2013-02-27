@@ -1,0 +1,9 @@
+TODO ($Id: TODO,v 1.3.2.3 2005/08/17 23:02:15 garloff Exp $)
+====
+
+
+/*     TODO:
+ *           Change wwid to string type to handle T10 ...
+ *           handle more identifiers to match devices
+ *     
+ */

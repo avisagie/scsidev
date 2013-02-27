@@ -1,0 +1,9 @@
+dnl	$Id: configure.in,v 1.1.1.1.8.1 2005/08/16 11:56:58 garloff Exp $	
+dnl Process this file with autoconf to produce a configure script.
+AC_INIT(scsidev.c)
+AC_CONFIG_HEADER(config.h)
+AC_PROG_CC
+AC_CONST
+AC_CHECK_HEADERS(linux/scsi.h scsi/scsi.h /usr/src/linux/drivers/scsi/scsi.h scsi/sg.h)
+AC_PROG_INSTALL
+AC_OUTPUT(Makefile)
