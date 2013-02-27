@@ -236,7 +236,7 @@
 #include <getopt.h>
  
 static char rcsid[] ="$Id$";
-static char *versid = "scsidev " VERSION " 2007-07-19";
+static char *versid = "scsidev " VERSION " 2013-02-27";
 static char *copyright = "Copyright: GNU GPL  (see file COPYING)\n" \
 " (w)  1994--1997 Eric Youngdale <eric@andante.org>\n"\
 "      2000--2005 Kurt Garloff   <garloff@suse.de>";
